@@ -1,0 +1,5 @@
+bump:
+  recurse: false
+  file: 'lib/solidus_pay_tomorrow/version.rb'
+  message: Bump SolidusPayTomorrow to %{version}
+  tag: true
