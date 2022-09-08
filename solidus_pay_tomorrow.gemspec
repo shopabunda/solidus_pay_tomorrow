@@ -29,8 +29,10 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency 'faraday-retry'
+  spec.add_dependency 'httparty'
   spec.add_dependency 'solidus_core', ['>= 2.0.0', '< 4']
   spec.add_dependency 'solidus_support', '~> 0.5'
 
+  spec.add_development_dependency 'pry-byebug'
   spec.add_development_dependency 'solidus_dev_support', '~> 2.5'
 end
