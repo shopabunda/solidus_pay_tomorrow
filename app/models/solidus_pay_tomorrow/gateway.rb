@@ -20,14 +20,24 @@ module SolidusPayTomorrow
       ActiveMerchant::Billing::Response.new(
         true,
         'Transaction Captured', capture_response,
-        'authorization': response_code
+        authorization: response_code
       )
     rescue StandardError => e
       failed_response(e)
     end
 
-    def void
-      not_implemented(__method__)
+    def void(response_code, gateway_options)
+      void_response = SolidusPayTomorrow::Client::VoidService.call(
+        order_token: response_code,
+        payment_method: gateway_options[:originator].payment_method
+      )
+      ActiveMerchant::Billing::Response.new(
+        true,
+        'Transaction Void', void_response,
+        authorization: response_code
+      )
+    rescue StandardError => e
+      failed_response(e)
     end
 
     def credit
