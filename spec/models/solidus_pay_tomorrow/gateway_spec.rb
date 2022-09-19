@@ -84,15 +84,55 @@ RSpec.describe SolidusPayTomorrow::Gateway, type: :model do
     end
   end
 
-  describe '#authorize' do
-    it 'raises NotImplementedError' do
-      expect { described_class.new.authorize }.to raise_error(NotImplementedError)
+  describe '#credit' do
+    let(:credit_success_response) do
+      { status: 'ok',
+        message: 'application refunded',
+        token: nil,
+        maxApprovalAmount: nil,
+        lender: nil }.stringify_keys!
+    end
+    let(:refund_reason) { create(:refund_reason) }
+    let(:refund) { create(:refund, reason: refund_reason) }
+
+    context 'when /refund call succeeds' do
+      before do
+        allow(SolidusPayTomorrow::Client::CreditService).to receive(:call).with(
+          order_token: payment.response_code,
+          payment_method: payment_method,
+          refund_reason: refund_reason.name
+        ).and_return(credit_success_response)
+      end
+
+      it 'returns an active merchant billing success response' do
+        result = described_class.new.credit(
+          payment.amount.to_f,
+          payment.response_code,
+          originator: refund
+        )
+        expect(result).to be_an_instance_of(ActiveMerchant::Billing::Response)
+        expect(result).to be_success
+      end
+    end
+
+    context 'when /refund call fails' do
+      before do
+        allow(SolidusPayTomorrow::Client::CreditService).to receive(:call).and_raise(StandardError)
+      end
+
+      it 'returns an active merchant billing failure response' do
+        result = described_class.new.credit(payment.amount.to_f,
+          payment.response_code,
+          originator: refund)
+        expect(result).to be_an_instance_of(ActiveMerchant::Billing::Response)
+        expect(result).not_to be_success
+      end
     end
   end
 
-  describe '#credit' do
+  describe '#authorize' do
     it 'raises NotImplementedError' do
-      expect { described_class.new.credit }.to raise_error(NotImplementedError)
+      expect { described_class.new.authorize }.to raise_error(NotImplementedError)
     end
   end
 

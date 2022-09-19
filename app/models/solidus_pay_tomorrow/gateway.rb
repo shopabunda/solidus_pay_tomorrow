@@ -42,8 +42,22 @@ module SolidusPayTomorrow
       failed_response(e)
     end
 
-    def credit
-      not_implemented(__method__)
+    def credit(_amount, response_code, gateway_options)
+      payment = Spree::Payment.find_by!(response_code: response_code,
+        source_type: 'SolidusPayTomorrow::PaymentSource')
+      credit_response = SolidusPayTomorrow::Client::CreditService.call(
+        order_token: response_code,
+        payment_method: payment.payment_method,
+        refund_reason: gateway_options[:originator].reason.name
+      )
+
+      ActiveMerchant::Billing::Response.new(
+        true,
+        'Transaction Refunded', credit_response,
+        authorization: response_code
+      )
+    rescue StandardError => e
+      failed_response(e)
     end
 
     private
