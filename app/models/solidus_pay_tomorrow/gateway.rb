@@ -12,8 +12,18 @@ module SolidusPayTomorrow
       not_implemented(__method__)
     end
 
-    def capture
-      not_implemented(__method__)
+    def capture(_amount, response_code, gateway_options)
+      capture_response = SolidusPayTomorrow::Client::CaptureService.call(
+        order_token: response_code,
+        payment_method: gateway_options[:originator].payment_method
+      )
+      ActiveMerchant::Billing::Response.new(
+        true,
+        'Transaction Captured', capture_response,
+        'authorization': response_code
+      )
+    rescue StandardError => e
+      failed_response(e)
     end
 
     def void
@@ -29,6 +39,10 @@ module SolidusPayTomorrow
     # Remove this once all methods are implemented
     def not_implemented(method_name)
       raise NotImplementedError, "#{method_name} method has not been implemented in #{self.class} class"
+    end
+
+    def failed_response(error)
+      ActiveMerchant::Billing::Response.new(false, error, {})
     end
   end
 end
