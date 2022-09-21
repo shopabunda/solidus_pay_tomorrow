@@ -11,7 +11,8 @@ module SolidusPayTomorrow
       end
 
       def add_javascripts
-        append_file 'vendor/assets/javascripts/spree/frontend/all.js', "//= require spree/frontend/solidus_pay_tomorrow\n"
+        append_file 'vendor/assets/javascripts/spree/frontend/all.js',
+          "//= require spree/frontend/solidus_pay_tomorrow\n"
         append_file 'vendor/assets/javascripts/spree/backend/all.js', "//= require spree/backend/solidus_pay_tomorrow\n"
       end
 
