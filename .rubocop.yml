@@ -3,3 +3,9 @@ require:
 
 AllCops:
   NewCops: disable
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Max: 5
