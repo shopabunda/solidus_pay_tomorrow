@@ -18,7 +18,8 @@ module SolidusPayTomorrow
           SolidusPayTomorrow::PaymentMethod,
           'pt_credentials', {
             username: ENV['PAY_TOMORROW_USERNAME'],
-            password: ENV['PAY_TOMORROW_PASSWORD']
+            password: ENV['PAY_TOMORROW_PASSWORD'],
+            signature: ENV['PAY_TOMORROW_SIGNATURE']
           }
         )
       end

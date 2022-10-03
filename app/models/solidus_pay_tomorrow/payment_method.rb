@@ -4,6 +4,7 @@ module SolidusPayTomorrow
   class PaymentMethod < SolidusSupport.payment_method_parent_class
     preference :username, :string
     preference :password, :string
+    preference :signature, :string
 
     def gateway_class
       ::SolidusPayTomorrow::Gateway
