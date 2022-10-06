@@ -46,7 +46,7 @@ module SolidusPayTomorrow
       def handle_errors!(result)
         return result.parsed_response if result.success?
 
-        raise StandardError, result.parsed_response['error']
+        raise StandardError, "#{result.parsed_response['error']}: #{result.parsed_response['errorDetails']}"
       end
 
       def new_token
