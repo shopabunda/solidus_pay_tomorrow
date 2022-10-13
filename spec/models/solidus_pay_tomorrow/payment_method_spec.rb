@@ -15,7 +15,7 @@ RSpec.describe SolidusPayTomorrow::PaymentMethod, type: :model do
 
   describe '#partial_name' do
     it 'has correct partial name' do
-      expect(described_class.new.partial_name).to eq 'pt'
+      expect(described_class.new.partial_name).to eq 'pay_tomorrow'
     end
   end
 end

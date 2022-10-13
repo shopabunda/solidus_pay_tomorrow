@@ -15,7 +15,7 @@ module SolidusPayTomorrow
     end
 
     def partial_name
-      'pt'
+      'pay_tomorrow'
     end
   end
 end
