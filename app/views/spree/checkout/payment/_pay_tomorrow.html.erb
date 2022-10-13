@@ -1,0 +1,12 @@
+<div id="card-container"></div>
+<button id="pay-tomorrow-card-button" type="button">Pay</button>
+
+<div id="create-order-status-container"></div>
+
+<div
+  id="pay-tomorrow-order-payload"
+  data-order-number="<%= @order.number %>"
+  data-payment-method-id="<%= payment_method.id %>"
+  data-order-token="<%= @order.guest_token %>"
+  >
+</div>
