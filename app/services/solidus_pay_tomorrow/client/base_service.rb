@@ -67,14 +67,14 @@ module SolidusPayTomorrow
       def token_headers
         { 'Accept': 'application/json',
           'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': "Basic #{payment_method.preferences[:signature]}" }
+          'Authorization': "Basic #{payment_method.preferred_signature}" }
       end
 
       def token_body
         { grant_type: 'password',
           scope: 'openid',
-          username: payment_method.preferences[:username],
-          password: payment_method.preferences[:password] }
+          username: payment_method.preferred_username,
+          password: payment_method.preferred_password }
       end
     end
   end

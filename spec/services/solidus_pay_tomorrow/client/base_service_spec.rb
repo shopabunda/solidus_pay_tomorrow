@@ -31,13 +31,13 @@ RSpec.describe SolidusPayTomorrow::Client::BaseService do
       let(:token_headers) do
         { 'Accept': 'application/json',
           'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': "Basic #{payment_method.preferences[:signature]}" }
+          'Authorization': "Basic #{payment_method.preferred_signature}" }
       end
       let(:token_body) do
         { grant_type: 'password',
           scope: 'openid',
-          username: payment_method.preferences[:username],
-          password: payment_method.preferences[:password] }
+          username: payment_method.preferred_username,
+          password: payment_method.preferred_password }
       end
       let(:http_response) { instance_double(HTTParty::Response, parsed_response: token.stringify_keys, success?: true) }
 
