@@ -29,6 +29,8 @@ RSpec.describe SolidusPayTomorrow::Client::CreateOrderService do
     end
 
     def expected_body
+      line_item1 = order.line_items.first
+      line_item2 = order.line_items.last
       { orderId: order.number,
         firstName: full_name.first_name,
         lastName: full_name.last_name,
@@ -43,8 +45,10 @@ RSpec.describe SolidusPayTomorrow::Client::CreateOrderService do
         cellPhone: order.bill_address.phone,
         loanAmount: order.total.to_i,
         applicationItems:
-          [{ description: "As seen on TV!", quantity: 1, price: 10.0, sku: "SKU-1" },
-           { description: "As seen on TV!", quantity: 1, price: 10.0, sku: "SKU-2" }] }.to_json
+          [{ description: line_item1.description, quantity: line_item1.quantity,
+             price: line_item1.price.to_f, sku: line_item1.variant.sku },
+           { description: line_item2.description, quantity: line_item2.quantity,
+             price: line_item2.price.to_f, sku: line_item2.variant.sku }] }.to_json
     end
   end
 end

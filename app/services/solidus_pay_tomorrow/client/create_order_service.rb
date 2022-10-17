@@ -58,7 +58,7 @@ module SolidusPayTomorrow
       # for API ref
       def items
         order.line_items.map do |line_item|
-          { description: line_item.product.description,
+          { description: line_item.description,
             quantity: line_item.quantity,
             price: line_item.price.to_f,
             sku: line_item.variant.sku }
