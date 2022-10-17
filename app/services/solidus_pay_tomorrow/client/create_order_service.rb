@@ -28,9 +28,8 @@ module SolidusPayTomorrow
         "#{api_base_url}/#{CREATE_ENDPOINT}"
       end
 
-      # TODO: Update URI once implemented
       def webhook_url(type)
-        "https://domain.com/webhooks/#{type}"
+        "#{SolidusPayTomorrow.config.base_url}/pay_tomorrow/#{type}"
       end
 
       def create_body

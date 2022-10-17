@@ -2,7 +2,7 @@
 
 module SolidusPayTomorrow
   class Configuration
-    attr_accessor :username, :password, :signature
+    attr_accessor :base_url
   end
 
   class << self

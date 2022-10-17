@@ -39,9 +39,9 @@ RSpec.describe SolidusPayTomorrow::Client::CreateOrderService do
         zip: order.bill_address.zipcode,
         state: order.bill_address.state.abbr,
         email: order.email,
-        returnUrl: 'https://domain.com/webhooks/return',
-        cancelUrl: 'https://domain.com/webhooks/cancel',
-        notifyUrl: 'https://domain.com/webhooks/notify',
+        returnUrl: webhook_url('return'),
+        cancelUrl: webhook_url('cancel'),
+        notifyUrl: "#{SolidusPayTomorrow.config.base_url}/pay_tomorrow/notify",
         cellPhone: order.bill_address.phone,
         loanAmount: order.total.to_i,
         applicationItems:
@@ -49,6 +49,10 @@ RSpec.describe SolidusPayTomorrow::Client::CreateOrderService do
              price: line_item1.price.to_f, sku: line_item1.variant.sku },
            { description: line_item2.description, quantity: line_item2.quantity,
              price: line_item2.price.to_f, sku: line_item2.variant.sku }] }.to_json
+    end
+
+    def webhook_url(type)
+      "#{SolidusPayTomorrow.config.base_url}#{spree.public_send("pay_tomorrow_#{type}_path")}"
     end
   end
 end
