@@ -17,5 +17,9 @@ module SolidusPayTomorrow
     def partial_name
       'pay_tomorrow'
     end
+
+    def source_required?
+      false
+    end
   end
 end
