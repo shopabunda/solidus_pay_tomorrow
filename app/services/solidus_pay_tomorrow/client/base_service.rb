@@ -4,7 +4,7 @@ require 'httparty'
 
 module SolidusPayTomorrow
   module Client
-    class BaseService
+    class BaseService < SolidusPayTomorrow::BaseService
       attr_reader :payment_method
 
       STAGING_URL = 'https://api-staging.paytomorrow.com'
@@ -13,14 +13,11 @@ module SolidusPayTomorrow
 
       def initialize(payment_method:, **_args)
         @payment_method = payment_method
+        super
       end
 
       class << self
         attr_accessor :current_token
-
-        def call(*args, **kwargs, &block)
-          new(*args, **kwargs, &block).call
-        end
       end
 
       def valid_token
