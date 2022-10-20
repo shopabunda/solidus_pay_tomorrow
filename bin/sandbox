@@ -96,6 +96,13 @@ unbundled bundle exec rails generate solidus:install \
 unbundled bundle exec rails generate solidus:auth:install --auto-run-migrations
 unbundled bundle exec rails generate ${extension_name}:install --auto-run-migrations
 
+if [ -n "$PAY_TOMORROW_REDIRECT_BASE_URL" ]
+then
+  sed -i '' "/Rails.application.configure do/{p;s/.*/  config.hosts << URI.parse(ENV['PAY_TOMORROW_REDIRECT_BASE_URL']).hostname/;}" config/environments/development.rb
+else
+  echo "Set PAY_TOMORROW_REDIRECT_BASE_URL env variable in order to do payments via PayTomorrow"
+fi
+
 echo
 echo "🚀 Sandbox app successfully created for $extension_name!"
 echo "🧪 This app is intended for test purposes."
