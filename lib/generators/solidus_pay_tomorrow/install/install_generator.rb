@@ -10,6 +10,10 @@ module SolidusPayTomorrow
         template 'initializer.rb', 'config/initializers/solidus_pay_tomorrow.rb'
       end
 
+      def mount_engine
+        route "mount SolidusPayTomorrow::Engine, at: '/solidus_pay_tomorrow'"
+      end
+
       def add_javascripts
         append_file 'vendor/assets/javascripts/spree/frontend/all.js',
           "//= require spree/frontend/solidus_pay_tomorrow\n"
@@ -37,6 +41,13 @@ module SolidusPayTomorrow
       def populate_seed_data
         say_status :loading, 'load seed data'
         rake('db:seed:solidus_pay_tomorrow')
+      end
+
+      def add_pay_tomorrow_application_controller
+        template(
+          'solidus_pay_tomorrow_order_application_controller.rb',
+          'app/controllers/solidus_pay_tomorrow/order_application_controller.rb'
+        )
       end
     end
   end

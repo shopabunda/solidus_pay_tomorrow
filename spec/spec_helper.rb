@@ -16,6 +16,7 @@ require dummy_env
 require 'solidus_dev_support/rspec/feature_helper'
 
 require 'spree/testing_support/url_helpers'
+require 'spree/testing_support/order_walkthrough'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
