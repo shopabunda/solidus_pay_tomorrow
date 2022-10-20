@@ -25,8 +25,12 @@ module SolidusPayTomorrow
     def create_payment
       return unless order_successfully_created?
 
-      order.payments.create!(payment_method: payment_method, state: :checkout, response_code: @result['token'],
-        amount: @order.total)
+      ActiveRecord::Base.transaction do
+        source = SolidusPayTomorrow::PaymentSource.create!(application_token: @result['token'],
+          payment_method: payment_method)
+        order.payments.create!(payment_method: payment_method, source: source, state: :checkout,
+          response_code: @result['token'], amount: @order.total)
+      end
     end
 
     def order_successfully_created?

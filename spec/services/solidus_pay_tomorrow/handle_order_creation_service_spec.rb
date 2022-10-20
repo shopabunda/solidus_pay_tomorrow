@@ -20,7 +20,7 @@ RSpec.describe SolidusPayTomorrow::HandleOrderCreationService do
         described_class.call(order: order, payment_method: payment_method)
       end.to change { order.payments.count }.from(0).to(1)
       expect(order.payments.take).to have_attributes(state: 'checkout', response_code: 'order-token',
-        amount: order.total)
+        amount: order.total, source: an_instance_of(SolidusPayTomorrow::PaymentSource))
     end
   end
 
