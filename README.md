@@ -25,6 +25,18 @@ bin/rails generate solidus_pay_tomorrow:install
 
 ## Development
 
+### Env variables
+These are necessary to run the extension
+```
+PAY_TOMORROW_USERNAME - From payTomorrow dashboard
+PAY_TOMORROW_PASSWORD - From payTomorrow dashboard
+PAY_TOMORROW_SIGNATURE - From payTomorrow dashboard
+PAY_TOMORROW_REDIRECT_BASE_URL - In dev mode, this could be an ngrok URL. Eg - https://80a5-125-63-97-62.in.ngrok.io
+SOLIDUS_FRONTEND=solidus_frontend
+SOLIDUS_BRANCH=v3.2
+SKIP_SOLIDUS_BOLT=true
+```
+
 ### Testing the extension
 
 First bundle your dependencies, then run `bin/rake`. `bin/rake` will default to building the dummy
