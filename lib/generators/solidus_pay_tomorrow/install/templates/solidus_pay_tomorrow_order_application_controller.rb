@@ -3,7 +3,6 @@
 module SolidusPayTomorrow
   class OrderApplicationController < Spree::StoreController
     def success
-      payment.update!(state: :pending)
       current_order.next!
 
       flash[:notice] = 'Payment Successful!'

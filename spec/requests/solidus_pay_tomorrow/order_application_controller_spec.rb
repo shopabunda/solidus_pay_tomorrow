@@ -28,7 +28,7 @@ RSpec.describe SolidusPayTomorrow::OrderApplicationController, type: :request do
         expect(get(spree.pay_tomorrow_return_path)).to redirect_to('/checkout/confirm')
 
         expect(order.state).to eq('confirm')
-        expect(payment.reload.state).to eq('pending')
+        expect(payment.reload.state).to eq('checkout')
       end
     end
   end
