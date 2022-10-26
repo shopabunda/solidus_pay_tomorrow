@@ -8,8 +8,10 @@ module SolidusPayTomorrow
       not_implemented(__method__)
     end
 
-    def purchase
-      not_implemented(__method__)
+    # The authorize step happens while checking out in PayTomorrow.
+    # Hence purchase just calls capture
+    def purchase(amount, payment_source, gateway_options)
+      capture(amount, payment_source.application_token, gateway_options)
     end
 
     def capture(_amount, response_code, gateway_options)

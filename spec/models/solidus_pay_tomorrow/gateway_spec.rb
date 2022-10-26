@@ -87,8 +87,43 @@ RSpec.describe SolidusPayTomorrow::Gateway, type: :model do
   end
 
   describe '#purchase' do
-    it 'raises NotImplementedError' do
-      expect { described_class.new.purchase }.to raise_error(NotImplementedError)
+    let(:capture_success_response) do
+      { status: 'ok',
+        message: 'application settled',
+        token: nil,
+        maxApprovalAmount: nil,
+        lender: nil }.stringify_keys!
+    end
+
+    context 'when /settle call succeeds' do
+      before do
+        allow(SolidusPayTomorrow::Client::CaptureService).to receive(:call).with(
+          order_token: payment.response_code,
+          payment_method: payment_method
+        ).and_return(capture_success_response)
+      end
+
+      it 'returns an active merchant billing success response' do
+        result = described_class.new.purchase(payment.amount.to_f,
+          payment_source,
+          originator: payment)
+        expect(result).to be_an_instance_of(ActiveMerchant::Billing::Response)
+        expect(result).to be_success
+      end
+    end
+
+    context 'when /settle call fails' do
+      before do
+        allow(SolidusPayTomorrow::Client::CaptureService).to receive(:call).and_raise(StandardError)
+      end
+
+      it 'returns an active merchant billing failure response' do
+        result = described_class.new.purchase(payment.amount.to_f,
+          payment_source,
+          originator: payment)
+        expect(result).to be_an_instance_of(ActiveMerchant::Billing::Response)
+        expect(result).not_to be_success
+      end
     end
   end
 end
