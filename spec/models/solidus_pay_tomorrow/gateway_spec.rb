@@ -19,25 +19,35 @@ RSpec.describe SolidusPayTomorrow::Gateway, type: :model do
         lender: nil }.stringify_keys!
     end
 
-    it 'returns an active merchant billing success response' do
-      allow(SolidusPayTomorrow::Client::CaptureService).to receive(:call).with(
-        order_token: payment.response_code,
-        payment_method: payment_method
-      ).and_return(capture_success_response)
-      result = described_class.new.capture(payment.amount.to_f,
-        payment.response_code,
-        originator: payment)
-      expect(result).to be_an_instance_of(ActiveMerchant::Billing::Response)
-      expect(result).to be_success
+    context 'when /settle call succeeds' do
+      before do
+        allow(SolidusPayTomorrow::Client::CaptureService).to receive(:call).with(
+          order_token: payment.response_code,
+          payment_method: payment_method
+        ).and_return(capture_success_response)
+      end
+
+      it 'returns an active merchant billing success response' do
+        result = described_class.new.capture(payment.amount.to_f,
+          payment.response_code,
+          originator: payment)
+        expect(result).to be_an_instance_of(ActiveMerchant::Billing::Response)
+        expect(result).to be_success
+      end
     end
 
-    it 'returns an active merchant billing failure response' do
-      allow(SolidusPayTomorrow::Client::CaptureService).to receive(:call).and_raise(StandardError)
-      result = described_class.new.capture(payment.amount.to_f,
-        payment.response_code,
-        originator: payment)
-      expect(result).to be_an_instance_of(ActiveMerchant::Billing::Response)
-      expect(result).not_to be_success
+    context 'when /settle call fails' do
+      before do
+        allow(SolidusPayTomorrow::Client::CaptureService).to receive(:call).and_raise(StandardError)
+      end
+
+      it 'returns an active merchant billing failure response' do
+        result = described_class.new.capture(payment.amount.to_f,
+          payment.response_code,
+          originator: payment)
+        expect(result).to be_an_instance_of(ActiveMerchant::Billing::Response)
+        expect(result).not_to be_success
+      end
     end
   end
 
