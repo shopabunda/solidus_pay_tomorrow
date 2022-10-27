@@ -61,11 +61,14 @@ RSpec.describe SolidusPayTomorrow::Gateway, type: :model do
     end
 
     context 'when /cancel call succeeds' do
-      it 'returns an active merchant billing success response' do
+      before do
         allow(SolidusPayTomorrow::Client::VoidService).to receive(:call).with(
           order_token: payment.response_code,
           payment_method: payment_method
         ).and_return(void_success_response)
+      end
+
+      it 'returns an active merchant billing success response' do
         result = described_class.new.void(payment.response_code,
           originator: payment)
         expect(result).to be_an_instance_of(ActiveMerchant::Billing::Response)
@@ -74,8 +77,11 @@ RSpec.describe SolidusPayTomorrow::Gateway, type: :model do
     end
 
     context 'when /cancel call fails' do
-      it 'returns an active merchant billing failure response' do
+      before do
         allow(SolidusPayTomorrow::Client::VoidService).to receive(:call).and_raise(StandardError)
+      end
+
+      it 'returns an active merchant billing failure response' do
         result = described_class.new.void(payment.response_code,
           originator: payment)
         expect(result).to be_an_instance_of(ActiveMerchant::Billing::Response)
