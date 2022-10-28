@@ -6,6 +6,10 @@ module SolidusPayTomorrow
     preference :password, :string
     preference :signature, :string
 
+    # If a payment has one of these states, then it can't be voided
+    # on PayTomorrow
+    NOT_VOIDABLE_STATES = %w[completed invalid void].freeze
+
     def gateway_class
       ::SolidusPayTomorrow::Gateway
     end
