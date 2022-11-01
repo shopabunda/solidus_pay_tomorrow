@@ -1,0 +1,5 @@
+<!-- replace 'erb[loud]:contains("spree/admin/shared/number_with_currency")' -->
+
+<% unless @refund.payment.payment_method.type == 'SolidusPayTomorrow::PaymentMethod' %>
+   <%= render "spree/admin/shared/number_with_currency", f: f, amount_attr: :amount, currency: @refund.currency, required: true %>
+<% end %>
