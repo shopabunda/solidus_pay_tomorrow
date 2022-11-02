@@ -19,10 +19,25 @@ RSpec.describe SolidusPayTomorrow::OrderApplicationController, type: :request do
   end
 
   describe 'GET /pay_tomorrow/return' do
-    context 'when PayTomorrow redirects on return URL - success ' do
+    context 'when PayTomorrow redirects on return URL - success & auto_capture is disabled' do
       it 'set correct order and payment status and redirect' do
         # Ensure that the order is in 'payment' state and payment is in 'checkout' state
         # before the request
+        expect(order.state).to eq('payment')
+        expect(payment.reload.state).to eq('checkout')
+        expect(get(spree.pay_tomorrow_return_path)).to redirect_to('/checkout/confirm')
+
+        expect(order.state).to eq('confirm')
+        expect(payment.reload.state).to eq('pending')
+      end
+    end
+
+    context 'when PayTomorrow redirects on return URL - success & auto_capture is enabled' do
+      before do
+        payment_method.update!(auto_capture: true)
+      end
+
+      it 'set correct order and payment status and redirect' do
         expect(order.state).to eq('payment')
         expect(payment.reload.state).to eq('checkout')
         expect(get(spree.pay_tomorrow_return_path)).to redirect_to('/checkout/confirm')

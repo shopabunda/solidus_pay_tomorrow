@@ -3,6 +3,10 @@
 module SolidusPayTomorrow
   class OrderApplicationController < Spree::StoreController
     def success
+      # If auto_capture is disabled, the payment is already processed and
+      # it'll be captured from admin. Marking as pending is necessary to avoid
+      # calling authorize! in this case
+      payment.update!(state: :pending) unless payment.payment_method.auto_capture?
       current_order.next!
 
       flash[:notice] = 'Payment Successful!'
