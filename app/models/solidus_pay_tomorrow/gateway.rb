@@ -43,14 +43,21 @@ module SolidusPayTomorrow
     end
 
     def credit(_amount, response_code, gateway_options)
-      payment = Spree::Payment.find_by!(response_code: response_code,
-        source_type: 'SolidusPayTomorrow::PaymentSource')
-      credit_response = SolidusPayTomorrow::Client::CreditService.call(
-        order_token: response_code,
-        payment_method: payment.payment_method,
-        refund_reason: gateway_options[:originator].reason.name
-      )
-
+      refund = gateway_options[:originator]
+      payment = refund.payment
+      credit_response =
+        if partial_refund?(refund, payment)
+          SolidusPayTomorrow::Client::PartialCreditService.call(
+            refund: refund,
+            payment_method: payment.payment_method
+          )
+        else
+          SolidusPayTomorrow::Client::CreditService.call(
+            order_token: response_code,
+            payment_method: payment.payment_method,
+            refund_reason: gateway_options[:originator].reason.name
+          )
+        end
       ActiveMerchant::Billing::Response.new(
         true,
         'Transaction Refunded', credit_response,
@@ -61,6 +68,10 @@ module SolidusPayTomorrow
     end
 
     private
+
+    def partial_refund?(refund, payment)
+      refund.amount < payment.amount
+    end
 
     # Remove this once all methods are implemented
     def not_implemented(method_name)

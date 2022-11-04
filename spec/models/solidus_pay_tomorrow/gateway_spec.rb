@@ -91,17 +91,28 @@ RSpec.describe SolidusPayTomorrow::Gateway, type: :model do
   end
 
   describe '#credit' do
-    let(:credit_success_response) do
-      { status: 'ok',
-        message: 'application refunded',
-        token: nil,
-        maxApprovalAmount: nil,
-        lender: nil }.stringify_keys!
-    end
     let(:refund_reason) { create(:refund_reason) }
-    let(:refund) { create(:refund, reason: refund_reason) }
+    let(:completed_payment) {
+      create(:payment, order: order, payment_method: payment_method, source: payment_source,
+        state: :completed, response_code: payment_source.application_token,
+        amount: order.total)
+    }
+    let(:full_refund) {
+      create(:refund, amount: completed_payment.amount, payment: completed_payment, reason: refund_reason)
+    }
+    let(:partial_refund) {
+      create(:refund, amount: completed_payment.amount - 1, payment: completed_payment, reason: refund_reason)
+    }
 
-    context 'when /refund call succeeds' do
+    context 'when full refund succeeds' do
+      let(:credit_success_response) do
+        { status: 'ok',
+          message: 'application refunded',
+          token: nil,
+          maxApprovalAmount: nil,
+          lender: nil }.stringify_keys!
+      end
+
       before do
         allow(SolidusPayTomorrow::Client::CreditService).to receive(:call).with(
           order_token: payment.response_code,
@@ -114,14 +125,14 @@ RSpec.describe SolidusPayTomorrow::Gateway, type: :model do
         result = described_class.new.credit(
           payment.amount.to_f,
           payment.response_code,
-          originator: refund
+          originator: full_refund
         )
         expect(result).to be_an_instance_of(ActiveMerchant::Billing::Response)
         expect(result).to be_success
       end
     end
 
-    context 'when /refund call fails' do
+    context 'when full refund fails' do
       before do
         allow(SolidusPayTomorrow::Client::CreditService).to receive(:call).and_raise(StandardError)
       end
@@ -129,7 +140,48 @@ RSpec.describe SolidusPayTomorrow::Gateway, type: :model do
       it 'returns an active merchant billing failure response' do
         result = described_class.new.credit(payment.amount.to_f,
           payment.response_code,
-          originator: refund)
+          originator: full_refund)
+        expect(result).to be_an_instance_of(ActiveMerchant::Billing::Response)
+        expect(result).not_to be_success
+      end
+    end
+
+    context 'when partial refund succeeds' do
+      let(:partial_credit_success_response) do
+        { status: "ok",
+          message: "Partial refund processed",
+          token: "order-token",
+          maxApprovalAmount: nil,
+          lender: nil }.stringify_keys!
+      end
+
+      before do
+        allow(SolidusPayTomorrow::Client::PartialCreditService).to receive(:call).with(
+          refund: partial_refund,
+          payment_method: payment_method,
+        ).and_return(partial_credit_success_response)
+      end
+
+      it 'returns an active merchant billing success response' do
+        result = described_class.new.credit(
+          payment.amount.to_f,
+          payment.response_code,
+          originator: partial_refund
+        )
+        expect(result).to be_an_instance_of(ActiveMerchant::Billing::Response)
+        expect(result).to be_success
+      end
+    end
+
+    context 'when partial refund fails' do
+      before do
+        allow(SolidusPayTomorrow::Client::PartialCreditService).to receive(:call).and_raise(StandardError)
+      end
+
+      it 'returns an active merchant billing failure response' do
+        result = described_class.new.credit(payment.amount.to_f,
+          payment.response_code,
+          originator: partial_refund)
         expect(result).to be_an_instance_of(ActiveMerchant::Billing::Response)
         expect(result).not_to be_success
       end
