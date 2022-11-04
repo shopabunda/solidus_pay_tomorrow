@@ -13,5 +13,15 @@ module SolidusPayTomorrow
 
       true
     end
+
+    # PayTomorrow orders can only process a single refund (partial or full)
+    # Hence don't show option for refund if there's already an existing refund
+    def can_credit?(payment)
+      return false if payment.refunds.exists?
+
+      return true if payment.state == 'completed'
+
+      false
+    end
   end
 end
