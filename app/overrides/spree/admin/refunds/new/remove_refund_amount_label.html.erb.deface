@@ -1,5 +1,0 @@
-<!-- replace 'erb[loud]:contains("f.label :amount")' -->
-
-<% unless @refund.payment.payment_method.type == 'SolidusPayTomorrow::PaymentMethod' %>
-   <%= f.label :amount %><br/>
-<% end %>
