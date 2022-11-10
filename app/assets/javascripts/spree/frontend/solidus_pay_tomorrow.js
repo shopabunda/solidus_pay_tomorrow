@@ -1,5 +1,5 @@
-let orderNumber;
-let paymentMethodId;
+let ptOrderNumber;
+let ptPaymentMethodId;
 let orderToken;
 
 document.addEventListener('DOMContentLoaded', async function () {
@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', async function () {
         'pay-tomorrow-order-payload'
     );
     if (createOrderPayload){
-        orderNumber = createOrderPayload.dataset.orderNumber;
-        paymentMethodId = createOrderPayload.dataset.paymentMethodId
+        ptOrderNumber = createOrderPayload.dataset.ptOrderNumber;
+        ptPaymentMethodId = createOrderPayload.dataset.ptPaymentMethodId
         orderToken = createOrderPayload.dataset.orderToken;
     }
 })
@@ -19,7 +19,7 @@ async function createOrder() {
     if (createOrderResponse.ok) {
         document.getElementById("card-container").remove()
         document.getElementById("pay-tomorrow-card-button").remove()
-        createOrderStatusDiv.innerHTML = "URL generated. Redirecting to payTomorrow to complete the payment..."
+        createOrderStatusDiv.innerHTML = "<strong>URL generated. Redirecting to payTomorrow to complete the payment...<strong>"
     } else {
         createOrderStatusDiv.innerHTML = "Payment Failed"
     }
@@ -28,9 +28,9 @@ async function createOrder() {
 
 async function createPayTomorrowOrder() {
     const body = JSON.stringify({
-        payment_method: paymentMethodId
+        payment_method: ptPaymentMethodId
     });
-    const resp = await fetch('/api/orders/' + orderNumber + '/pay_tomorrow', {
+    const resp = await fetch('/api/orders/' + ptOrderNumber + '/pay_tomorrow', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
