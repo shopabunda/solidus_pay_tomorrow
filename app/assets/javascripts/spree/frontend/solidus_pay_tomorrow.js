@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         cardButton.disabled = true;
         const response = await createOrder();
         if (response.hasOwnProperty('url')) {
-            window.open(response.url, '_blank')
+            window.open(response.url, '_self')
         } else {
             cardButton.disabled = false;
         }
