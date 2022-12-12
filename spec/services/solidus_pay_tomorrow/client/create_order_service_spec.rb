@@ -47,10 +47,10 @@ RSpec.describe SolidusPayTomorrow::Client::CreateOrderService do
         taxes: order.tax_total,
         shipping: order.shipment_total,
         applicationItems:
-          [{ description: line_item1.description, quantity: line_item1.quantity,
-             price: line_item1.price.to_f, sku: line_item1.variant.sku },
-           { description: line_item2.description, quantity: line_item2.quantity,
-             price: line_item2.price.to_f, sku: line_item2.variant.sku }] }.to_json
+          [{ description: line_item1.name, quantity: line_item1.quantity,
+             price: line_item1.total, sku: line_item1.sku },
+           { description: line_item2.name, quantity: line_item2.quantity,
+             price: line_item2.total, sku: line_item2.sku }] }.to_json
     end
 
     def webhook_url(type)
