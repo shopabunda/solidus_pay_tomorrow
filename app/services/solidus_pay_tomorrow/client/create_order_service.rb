@@ -36,21 +36,21 @@ module SolidusPayTomorrow
         { orderId: order.number,
           firstName: full_name.first_name,
           lastName: full_name.last_name,
-          street: order.bill_address.address1,
-          city: order.bill_address.city,
-          zip: order.bill_address.zipcode,
-          state: order.bill_address.state.abbr,
+          street: order.ship_address.address1,
+          city: order.ship_address.city,
+          zip: order.ship_address.zipcode,
+          state: order.ship_address.state.abbr,
           email: order.email,
           returnUrl: webhook_url('return'),
           cancelUrl: webhook_url('cancel'),
           notifyUrl: webhook_url('notify'),
-          cellPhone: order.bill_address.phone,
+          cellPhone: order.ship_address.phone,
           loanAmount: order.total.to_i,
           applicationItems: items }
       end
 
       def full_name
-        Spree::Address::Name.new(order.bill_address.name)
+        Spree::Address::Name.new(order.ship_address.name)
       end
 
       # Ref: https://docs.paytomorrow.com/docs/api-reference/api/create-order/
