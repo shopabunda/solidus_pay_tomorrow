@@ -43,7 +43,9 @@ RSpec.describe SolidusPayTomorrow::Client::CreateOrderService do
         cancelUrl: webhook_url('cancel'),
         notifyUrl: "#{SolidusPayTomorrow.config.base_url}/pay_tomorrow/notify",
         cellPhone: order.ship_address.phone,
-        loanAmount: order.total.to_i,
+        loanAmount: order.total,
+        taxes: order.tax_total,
+        shipping: order.shipment_total,
         applicationItems:
           [{ description: line_item1.description, quantity: line_item1.quantity,
              price: line_item1.price.to_f, sku: line_item1.variant.sku },

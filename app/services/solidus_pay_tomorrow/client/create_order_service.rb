@@ -45,7 +45,9 @@ module SolidusPayTomorrow
           cancelUrl: webhook_url('cancel'),
           notifyUrl: webhook_url('notify'),
           cellPhone: order.ship_address.phone,
-          loanAmount: order.total.to_i,
+          loanAmount: order.total,
+          taxes: order.tax_total,
+          shipping: order.shipment_total,
           applicationItems: items }
       end
 
