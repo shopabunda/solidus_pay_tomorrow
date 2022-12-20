@@ -30,8 +30,15 @@ module SolidusPayTomorrow
         "#{api_base_url}/#{PARTIAL_REFUND_ENDPOINT.gsub(':order_token', order_token)}"
       end
 
+      # Note: The way partial refunds work in PT is -
+      # When a partial refund is created, PT actually refunds the whole
+      # loan amount that is authorized during capture,
+      # and a new loan is created for partial refund loanAmount
+      # Hence, the refund that we create is of
+      # payment's loan amount - refund amount to actually only refund
+      # refund.amount
       def partial_refund_body
-        { loanAmount: refund.amount,
+        { loanAmount: refund.payment.amount - refund.amount,
           items: items }
       end
 

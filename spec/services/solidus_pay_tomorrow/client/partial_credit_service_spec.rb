@@ -74,7 +74,7 @@ RSpec.describe SolidusPayTomorrow::Client::PartialCreditService do
 
     def refund_body
       line_item = order.line_items.first
-      { loanAmount: refund.amount,
+      { loanAmount: payment.amount - refund.amount,
         items: [{
           description: line_item.description,
           quantity: line_item.quantity,
