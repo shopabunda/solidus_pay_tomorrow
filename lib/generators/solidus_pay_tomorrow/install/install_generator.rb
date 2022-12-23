@@ -47,6 +47,10 @@ module SolidusPayTomorrow
           'solidus_pay_tomorrow_order_application_controller.rb',
           'app/controllers/solidus_pay_tomorrow/order_application_controller.rb'
         )
+        template(
+          'solidus_pay_tomorrow_api_webhooks_controller.rb',
+          'app/controllers/solidus_pay_tomorrow/api/webhooks_controller.rb'
+        )
       end
     end
   end

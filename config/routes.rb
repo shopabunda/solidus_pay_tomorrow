@@ -8,4 +8,6 @@ Spree::Core::Engine.routes.draw do
     as: 'pay_tomorrow_return'
   get 'pay_tomorrow/cancel', to: '/solidus_pay_tomorrow/order_application#cancel',
     as: 'pay_tomorrow_cancel'
+  post 'pay_tomorrow/notify', to: '/solidus_pay_tomorrow/api/webhooks#notify',
+    as: 'pay_tomorrow_notify'
 end
