@@ -61,7 +61,7 @@ module SolidusPayTomorrow
       ActiveMerchant::Billing::Response.new(
         true,
         'Transaction Refunded', credit_response,
-        authorization: response_code
+        authorization: credit_response['token']
       )
     rescue StandardError => e
       failed_response(e)
@@ -70,7 +70,7 @@ module SolidusPayTomorrow
     private
 
     def partial_refund?(refund, payment)
-      refund.amount < payment.amount
+      refund.amount < payment.credit_allowed
     end
 
     # Remove this once all methods are implemented
