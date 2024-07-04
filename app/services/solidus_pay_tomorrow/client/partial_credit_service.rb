@@ -3,12 +3,13 @@
 module SolidusPayTomorrow
   module Client
     class PartialCreditService < SolidusPayTomorrow::Client::BaseService
-      attr_reader :refund
+      attr_reader :refund, :payment
 
       PARTIAL_REFUND_ENDPOINT = 'api/ecommerce/application/:order_token/partial/refund'
 
       def initialize(refund:, payment_method:)
         @refund = refund
+        @payment = refund.payment
         super
       end
 
@@ -18,8 +19,9 @@ module SolidusPayTomorrow
 
       private
 
+      # Either take last saved application token from refunds or the original order token
       def order_token
-        refund.payment.response_code
+        payment.refunds.where.not(transaction_id: nil).last&.transaction_id || payment.response_code
       end
 
       def partial_credit
@@ -35,15 +37,17 @@ module SolidusPayTomorrow
       # loan amount that is authorized during capture,
       # and a new loan is created for partial refund loanAmount
       # Hence, the refund that we create is of
-      # payment's loan amount - refund amount to actually only refund
-      # refund.amount
+      # loan_amount = available credit - refund amount
+      # Eg: Order total = 1000
+      # Refund 1 = 50 => creates a new loan for 1000-50=950
+      # Refund 2 = 100 => creates a new loan for 950-100=850
       def partial_refund_body
-        { loanAmount: refund.payment.amount - refund.amount,
+        { loanAmount: payment.credit_allowed - refund.amount,
           items: items }
       end
 
       def items
-        refund.payment.order.line_items.map do |line_item|
+        payment.order.line_items.map do |line_item|
           { description: line_item.description,
             quantity: line_item.quantity,
             price: line_item.price.to_f }
